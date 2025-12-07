@@ -1,0 +1,18 @@
+{
+    "name": "Accounting",
+    "alias": "accounting",
+    "description": "Double-entry accounting system with general ledger, journal entries, chart of accounts, and financial reporting. Integrates with Payroll for automatic journal entry creation.",
+    "keywords": [
+        "accounting",
+        "ledger",
+        "journal-entry",
+        "chart-of-accounts",
+        "financial-reporting",
+        "trial-balance"
+    ],
+    "priority": 0,
+    "providers": [
+        "Modules\\Accounting\\Providers\\AccountingServiceProvider"
+    ],
+    "requires": []
+}
