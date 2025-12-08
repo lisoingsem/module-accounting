@@ -39,6 +39,8 @@ final class AccountingServiceProvider extends ServiceProvider
     {
         $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
+        $this->app->register(RepositoryServiceProvider::class);
+        $this->app->register(MorphMapServiceProvider::class);
     }
 
     /**
