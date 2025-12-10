@@ -6,6 +6,7 @@ namespace Modules\Accounting\Services;
 
 use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Modules\Accounting\Contracts\AccountContract;
@@ -44,33 +45,33 @@ final class AccountingService
             $this->validateBalance($linesData);
 
             // Get or create period
-            $period = $this->getOrCreatePeriod($entryData['entry_date'] ?? now()->toDateString());
+            $period = $this->getOrCreatePeriod(Arr::get($entryData, 'entry_date', now()->toDateString()));
 
             // Create journal entry
             $entry = $this->journalEntryRepository->create([
-                'entry_number' => $entryData['entry_number'] ?? $this->journalEntryRepository->getNextEntryNumber(),
-                'entry_date' => $entryData['entry_date'] ?? now()->toDateString(),
-                'type' => $entryData['type'] ?? JournalEntryType::MANUAL->value,
+                'entry_number' => Arr::get($entryData, 'entry_number', $this->journalEntryRepository->getNextEntryNumber()),
+                'entry_date' => Arr::get($entryData, 'entry_date', now()->toDateString()),
+                'type' => Arr::get($entryData, 'type', JournalEntryType::MANUAL->value),
                 'status' => EntryStatus::DRAFT->value,
-                'description' => $entryData['description'] ?? '',
-                'reference' => $entryData['reference'] ?? null,
+                'description' => Arr::get($entryData, 'description', ''),
+                'reference' => Arr::get($entryData, 'reference', null),
                 'period_id' => $period?->id,
                 'created_by' => Auth::id(),
-                'source_type' => $entryData['source_type'] ?? null,
-                'source_id' => $entryData['source_id'] ?? null,
-                'notes' => $entryData['notes'] ?? null,
+                'source_type' => Arr::get($entryData, 'source_type', null),
+                'source_id' => Arr::get($entryData, 'source_id', null),
+                'notes' => Arr::get($entryData, 'notes', null),
             ]);
 
             // Create journal entry lines
             $lineNumber = 1;
             foreach ($linesData as $lineData) {
-                JournalEntryLine::create([
+                JournalEntryLine::query()->create([
                     'journal_entry_id' => $entry->id,
-                    'account_id' => $lineData['account_id'],
-                    'type' => $lineData['type'], // 'debit' or 'credit'
-                    'amount' => $lineData['amount'],
-                    'description' => $lineData['description'] ?? null,
-                    'reference' => $lineData['reference'] ?? null,
+                    'account_id' => Arr::get($lineData, 'account_id'),
+                    'type' => Arr::get($lineData, 'type'), // 'debit' or 'credit'
+                    'amount' => Arr::get($lineData, 'amount'),
+                    'description' => Arr::get($lineData, 'description', null),
+                    'reference' => Arr::get($lineData, 'reference', null),
                     'line_number' => $lineNumber++,
                 ]);
             }
@@ -90,9 +91,7 @@ final class AccountingService
             }
 
             // Validate balance
-            if ( ! $entry->isBalanced()) {
-                throw new UnbalancedJournalEntryException('Journal entry is not balanced. Debits must equal credits.');
-            }
+            throw_unless($entry->isBalanced(), new UnbalancedJournalEntryException('Journal entry is not balanced. Debits must equal credits.'));
 
             // Update entry status
             $entry->update([
@@ -121,9 +120,7 @@ final class AccountingService
     public function reverseJournalEntry(JournalEntry $entry, ?string $description = null): JournalEntry
     {
         return DB::transaction(function () use ($entry, $description): JournalEntry {
-            if ( ! $entry->isPosted()) {
-                throw new Exception('Only posted entries can be reversed.');
-            }
+            throw_unless($entry->isPosted(), new Exception('Only posted entries can be reversed.'));
 
             // Create reversing entry
             $reversingEntry = $this->createJournalEntry([
@@ -155,9 +152,7 @@ final class AccountingService
         $account = $this->accountRepository->findByCode('4000'); // Revenue account
         $cashAccount = $this->accountRepository->findByCode('1000'); // Cash account
 
-        if ( ! $account || ! $cashAccount) {
-            throw new Exception('Required accounts not found in chart of accounts.');
-        }
+        throw_if( ! $account || ! $cashAccount, new Exception('Required accounts not found in chart of accounts.'));
 
         return $this->createJournalEntry([
             'entry_date' => $income->transaction_date ?? now()->toDateString(),
@@ -190,9 +185,7 @@ final class AccountingService
         $account = $this->accountRepository->findByCode('5000'); // Expense account
         $cashAccount = $this->accountRepository->findByCode('1000'); // Cash account
 
-        if ( ! $account || ! $cashAccount) {
-            throw new Exception('Required accounts not found in chart of accounts.');
-        }
+        throw_if( ! $account || ! $cashAccount, new Exception('Required accounts not found in chart of accounts.'));
 
         return $this->createJournalEntry([
             'entry_date' => $expense->transaction_date ?? now()->toDateString(),
@@ -250,18 +243,16 @@ final class AccountingService
         $totalCredits = 0;
 
         foreach ($linesData as $line) {
-            if ('debit' === $line['type']) {
+            if ('debit' === Arr::get($line, 'type')) {
                 $totalDebits += (float) $line['amount'];
             } else {
                 $totalCredits += (float) $line['amount'];
             }
         }
 
-        if (abs($totalDebits - $totalCredits) >= 0.01) {
-            throw new UnbalancedJournalEntryException(
-                "Journal entry is not balanced. Debits: {$totalDebits}, Credits: {$totalCredits}"
-            );
-        }
+        throw_if(abs($totalDebits - $totalCredits) >= 0.01, new UnbalancedJournalEntryException(
+            "Journal entry is not balanced. Debits: {$totalDebits}, Credits: {$totalCredits}"
+        ));
     }
 
     /**
@@ -292,7 +283,7 @@ final class AccountingService
     {
         $period = $this->periodRepository->getPeriodForDate($date);
 
-        if ( ! $period) {
+        if ( ! $period instanceof Model) {
             // Create a default period if none exists
             $startDate = now()->startOfYear()->toDateString();
             $endDate = now()->endOfYear()->toDateString();

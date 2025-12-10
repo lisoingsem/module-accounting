@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\Accounting\Models;
 
 use App\Traits\HasUuidTrait;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -123,7 +124,8 @@ final class Account extends Model
     /**
      * Scope to get active accounts.
      */
-    public function scopeActive($query)
+    #[Scope]
+    protected function active($query)
     {
         return $query->where('is_active', true);
     }
@@ -131,7 +133,8 @@ final class Account extends Model
     /**
      * Scope to get accounts by type.
      */
-    public function scopeOfType($query, AccountType $type)
+    #[Scope]
+    protected function ofType($query, AccountType $type)
     {
         return $query->where('type', $type->value);
     }
@@ -139,7 +142,8 @@ final class Account extends Model
     /**
      * Scope to get root accounts (no parent).
      */
-    public function scopeRoot($query)
+    #[Scope]
+    protected function root($query)
     {
         return $query->whereNull('parent_id');
     }

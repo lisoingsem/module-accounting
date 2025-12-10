@@ -6,6 +6,7 @@ namespace Modules\Accounting\Contracts;
 
 use App\Contracts\BaseEloquentContract;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 interface AccountingPeriodContract extends BaseEloquentContract
 {
@@ -22,10 +23,10 @@ interface AccountingPeriodContract extends BaseEloquentContract
     /**
      * Get period for a specific date.
      */
-    public function getPeriodForDate(string $date): ?\Illuminate\Database\Eloquent\Model;
+    public function getPeriodForDate(string $date): ?Model;
 
     /**
      * Get current period.
      */
-    public function getCurrentPeriod(): ?\Illuminate\Database\Eloquent\Model;
+    public function getCurrentPeriod(): ?Model;
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\Accounting\Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Arr;
 use Modules\Accounting\Enums\AccountType;
 use Modules\Accounting\Models\Account;
 
@@ -223,22 +224,19 @@ final class ChartOfAccountsSeeder extends Seeder
         foreach ($accounts as $accountData) {
             $parentId = null;
             if (isset($accountData['parent_code'])) {
-                $parent = Account::where('code', $accountData['parent_code'])->first();
+                $parent = Account::query()->where('code', Arr::get($accountData, 'parent_code'))->first();
                 $parentId = $parent?->id;
                 unset($accountData['parent_code']);
             }
 
-            Account::updateOrCreate(
-                ['code' => $accountData['code']],
-                array_merge($accountData, [
-                    'parent_id' => $parentId,
-                    'is_active' => true,
-                    'opening_balance' => 0,
-                    'current_balance' => 0,
-                    'currency' => 'USD',
-                    'sort_order' => (int) mb_substr($accountData['code'], -1),
-                ])
-            );
+            Account::query()->updateOrCreate(['code' => Arr::get($accountData, 'code')], array_merge($accountData, [
+                'parent_id' => $parentId,
+                'is_active' => true,
+                'opening_balance' => 0,
+                'current_balance' => 0,
+                'currency' => 'USD',
+                'sort_order' => (int) mb_substr(Arr::get($accountData, 'code'), -1),
+            ]));
         }
     }
 }

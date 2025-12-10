@@ -7,6 +7,8 @@ namespace Modules\Accounting\Providers;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Modules\Accounting\Listeners\RecordFinanceExpense;
 use Modules\Accounting\Listeners\RecordFinanceIncome;
+use Modules\Finance\Events\ExpenseCreated;
+use Modules\Finance\Events\IncomeCreated;
 
 final class EventServiceProvider extends ServiceProvider
 {
@@ -27,14 +29,14 @@ final class EventServiceProvider extends ServiceProvider
         $listeners = [];
 
         // Only register Finance listeners if Finance module is enabled
-        if (class_exists(\Modules\Finance\Events\IncomeCreated::class)) {
-            $listeners[\Modules\Finance\Events\IncomeCreated::class] = [
+        if (class_exists(IncomeCreated::class)) {
+            $listeners[IncomeCreated::class] = [
                 RecordFinanceIncome::class,
             ];
         }
 
-        if (class_exists(\Modules\Finance\Events\ExpenseCreated::class)) {
-            $listeners[\Modules\Finance\Events\ExpenseCreated::class] = [
+        if (class_exists(ExpenseCreated::class)) {
+            $listeners[ExpenseCreated::class] = [
                 RecordFinanceExpense::class,
             ];
         }

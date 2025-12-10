@@ -6,6 +6,7 @@ namespace Modules\Accounting\Repositories;
 
 use App\Repositories\BaseEloquentRepository;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Modules\Accounting\Contracts\AccountContract;
 use Modules\Accounting\Enums\AccountType;
 use Modules\Accounting\Models\Account;
@@ -39,7 +40,7 @@ final class AccountRepository extends BaseEloquentRepository implements AccountC
     /**
      * Get account by code.
      */
-    public function findByCode(string $code): ?\Illuminate\Database\Eloquent\Model
+    public function findByCode(string $code): ?Model
     {
         return $this->model->where('code', $code)->first();
     }

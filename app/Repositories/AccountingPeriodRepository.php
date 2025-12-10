@@ -6,6 +6,7 @@ namespace Modules\Accounting\Repositories;
 
 use App\Repositories\BaseEloquentRepository;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Modules\Accounting\Contracts\AccountingPeriodContract;
 use Modules\Accounting\Models\AccountingPeriod;
 
@@ -38,7 +39,7 @@ final class AccountingPeriodRepository extends BaseEloquentRepository implements
     /**
      * Get period for a specific date.
      */
-    public function getPeriodForDate(string $date): ?\Illuminate\Database\Eloquent\Model
+    public function getPeriodForDate(string $date): ?Model
     {
         return $this->model
             ->where('start_date', '<=', $date)
@@ -49,7 +50,7 @@ final class AccountingPeriodRepository extends BaseEloquentRepository implements
     /**
      * Get current period.
      */
-    public function getCurrentPeriod(): ?\Illuminate\Database\Eloquent\Model
+    public function getCurrentPeriod(): ?Model
     {
         $today = now()->toDateString();
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\Accounting\Services;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 use InvalidArgumentException;
 use Modules\Accounting\Contracts\AccountContract;
 use Modules\Accounting\Contracts\JournalEntryContract;
@@ -127,7 +128,7 @@ final class ReportService
 
         // Retained Earnings (Revenue - Expenses)
         $pnl = $this->getProfitAndLoss(now()->startOfYear()->toDateString(), $asOfDate);
-        $retainedEarnings = $pnl['net_income'];
+        $retainedEarnings = Arr::get($pnl, 'net_income');
         $totalEquity += $retainedEarnings;
 
         $totalLiabilitiesAndEquity = $totalLiabilities + $totalEquity;
@@ -161,9 +162,7 @@ final class ReportService
     {
         $account = $this->accountRepository->find($accountId);
 
-        if ( ! $account) {
-            throw new InvalidArgumentException("Account not found: {$accountId}");
-        }
+        throw_unless($account, new InvalidArgumentException("Account not found: {$accountId}"));
 
         $startDate ??= now()->startOfYear()->toDateString();
         $endDate ??= now()->toDateString();
@@ -182,7 +181,7 @@ final class ReportService
         $entries = $this->journalEntryRepository->getEntriesForDateRange($startDate, $endDate);
         $entryIds = $entries->pluck('id')->toArray();
 
-        $lines = JournalEntryLine::where('account_id', $accountId)
+        $lines = JournalEntryLine::query()->where('account_id', $accountId)
             ->whereIn('journal_entry_id', $entryIds)
             ->with(['journalEntry'])
             ->orderBy('journal_entry_id')
@@ -203,12 +202,10 @@ final class ReportService
                 } else {
                     $runningBalance -= $amount;
                 }
+            } elseif ($account->getTypeEnum()->increasesWithCredit()) {
+                $runningBalance += $amount;
             } else {
-                if ($account->getTypeEnum()->increasesWithCredit()) {
-                    $runningBalance += $amount;
-                } else {
-                    $runningBalance -= $amount;
-                }
+                $runningBalance -= $amount;
             }
 
             $ledgerEntries[] = [
@@ -258,7 +255,7 @@ final class ReportService
             return 0;
         }
 
-        return (float) JournalEntryLine::where('account_id', $account->id)
+        return (float) JournalEntryLine::query()->where('account_id', $account->id)
             ->where('type', 'debit')
             ->whereIn('journal_entry_id', $entryIds)
             ->sum('amount');
@@ -275,7 +272,7 @@ final class ReportService
             return 0;
         }
 
-        return (float) JournalEntryLine::where('account_id', $account->id)
+        return (float) JournalEntryLine::query()->where('account_id', $account->id)
             ->where('type', 'credit')
             ->whereIn('journal_entry_id', $entryIds)
             ->sum('amount');

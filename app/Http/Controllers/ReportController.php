@@ -29,7 +29,7 @@ final class ReportController extends Controller
 
         $trialBalance = $this->reportService->getTrialBalance($startDate, $endDate);
 
-        return response()->json([
+        return new JsonResponse([
             'success' => true,
             'data' => $trialBalance,
         ]);
@@ -45,7 +45,7 @@ final class ReportController extends Controller
 
         $pnl = $this->reportService->getProfitAndLoss($startDate, $endDate);
 
-        return response()->json([
+        return new JsonResponse([
             'success' => true,
             'data' => $pnl,
         ]);
@@ -60,7 +60,7 @@ final class ReportController extends Controller
 
         $balanceSheet = $this->reportService->getBalanceSheet($asOfDate);
 
-        return response()->json([
+        return new JsonResponse([
             'success' => true,
             'data' => $balanceSheet,
         ]);
@@ -77,12 +77,12 @@ final class ReportController extends Controller
         try {
             $ledger = $this->reportService->getAccountLedger($accountId, $startDate, $endDate);
 
-            return response()->json([
+            return new JsonResponse([
                 'success' => true,
                 'data' => $ledger,
             ]);
         } catch (InvalidArgumentException $e) {
-            return response()->json([
+            return new JsonResponse([
                 'success' => false,
                 'message' => $e->getMessage(),
             ], 404);

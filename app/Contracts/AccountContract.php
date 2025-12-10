@@ -6,6 +6,7 @@ namespace Modules\Accounting\Contracts;
 
 use App\Contracts\BaseEloquentContract;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Modules\Accounting\Enums\AccountType;
 
 interface AccountContract extends BaseEloquentContract
@@ -23,7 +24,7 @@ interface AccountContract extends BaseEloquentContract
     /**
      * Get account by code.
      */
-    public function findByCode(string $code): ?\Illuminate\Database\Eloquent\Model;
+    public function findByCode(string $code): ?Model;
 
     /**
      * Get active accounts.

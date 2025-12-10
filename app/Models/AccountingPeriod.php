@@ -6,6 +6,7 @@ namespace Modules\Accounting\Models;
 
 use App\Models\User;
 use App\Traits\HasUuidTrait;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -75,7 +76,8 @@ final class AccountingPeriod extends Model
     /**
      * Scope to get open periods.
      */
-    public function scopeOpen($query)
+    #[Scope]
+    protected function open($query)
     {
         return $query->where('is_closed', false);
     }
@@ -83,7 +85,8 @@ final class AccountingPeriod extends Model
     /**
      * Scope to get closed periods.
      */
-    public function scopeClosed($query)
+    #[Scope]
+    protected function closed($query)
     {
         return $query->where('is_closed', true);
     }

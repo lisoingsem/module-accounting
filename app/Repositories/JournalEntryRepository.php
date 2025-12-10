@@ -6,6 +6,7 @@ namespace Modules\Accounting\Repositories;
 
 use App\Repositories\BaseEloquentRepository;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 use Modules\Accounting\Contracts\JournalEntryContract;
 use Modules\Accounting\Enums\EntryStatus;
 use Modules\Accounting\Models\JournalEntry;
@@ -38,14 +39,14 @@ final class JournalEntryRepository extends BaseEloquentRepository implements Jou
 
         foreach ($entries as $entryNumber) {
             if (preg_match('/JE-(\d{4})-(\d+)/', $entryNumber, $matches)) {
-                $sequence = (int) $matches[2];
+                $sequence = (int) Arr::get($matches, 2);
                 $maxSequence = max($maxSequence, $sequence);
             }
         }
 
         $nextSequence = $maxSequence + 1;
 
-        return 'JE-' . $year . '-' . str_pad((string) $nextSequence, 6, '0', STR_PAD_LEFT);
+        return 'JE-' . $year . '-' . mb_str_pad((string) $nextSequence, 6, '0', STR_PAD_LEFT);
     }
 
     /**

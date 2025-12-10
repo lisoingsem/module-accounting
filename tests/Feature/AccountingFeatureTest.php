@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Arr;
 use Modules\Accounting\Enums\AccountType;
 use Modules\Accounting\Exceptions\UnbalancedJournalEntryException;
 use Modules\Accounting\Models\Account;
@@ -15,7 +16,7 @@ use Modules\Accounting\Services\ReportService;
 test('can create chart of accounts', function (): void {
     $user = User::factory()->create();
     $this->actingAs($user);
-    $cashAccount = Account::create([
+    $cashAccount = Account::query()->create([
         'code' => '1000',
         'name' => 'Cash',
         'type' => AccountType::ASSET->value,
@@ -36,7 +37,7 @@ test('can create chart of accounts', function (): void {
 test('can create accounting period', function (): void {
     $user = User::factory()->create();
     $this->actingAs($user);
-    $period = AccountingPeriod::create([
+    $period = AccountingPeriod::query()->create([
         'name' => '2025',
         'start_date' => '2025-01-01',
         'end_date' => '2025-12-31',
@@ -53,7 +54,7 @@ test('can create accounting period', function (): void {
 test('can create balanced journal entry', function (): void {
     $user = User::factory()->create();
     $this->actingAs($user);
-    $cashAccount = Account::create([
+    $cashAccount = Account::query()->create([
         'code' => '1000',
         'name' => 'Cash',
         'type' => AccountType::ASSET->value,
@@ -62,7 +63,7 @@ test('can create balanced journal entry', function (): void {
         'current_balance' => 0,
     ]);
 
-    $revenueAccount = Account::create([
+    $revenueAccount = Account::query()->create([
         'code' => '4000',
         'name' => 'Revenue',
         'type' => AccountType::REVENUE->value,
@@ -100,7 +101,7 @@ test('can create balanced journal entry', function (): void {
 test('throws exception for unbalanced journal entry', function (): void {
     $user = User::factory()->create();
     $this->actingAs($user);
-    $cashAccount = Account::create([
+    $cashAccount = Account::query()->create([
         'code' => '1000',
         'name' => 'Cash',
         'type' => AccountType::ASSET->value,
@@ -129,7 +130,7 @@ test('throws exception for unbalanced journal entry', function (): void {
 test('can post journal entry and update account balances', function (): void {
     $user = User::factory()->create();
     $this->actingAs($user);
-    $cashAccount = Account::create([
+    $cashAccount = Account::query()->create([
         'code' => '1000',
         'name' => 'Cash',
         'type' => AccountType::ASSET->value,
@@ -138,7 +139,7 @@ test('can post journal entry and update account balances', function (): void {
         'current_balance' => 0,
     ]);
 
-    $revenueAccount = Account::create([
+    $revenueAccount = Account::query()->create([
         'code' => '4000',
         'name' => 'Revenue',
         'type' => AccountType::REVENUE->value,
@@ -182,7 +183,7 @@ test('can post journal entry and update account balances', function (): void {
 test('can generate trial balance', function (): void {
     $user = User::factory()->create();
     $this->actingAs($user);
-    $cashAccount = Account::create([
+    $cashAccount = Account::query()->create([
         'code' => '1000',
         'name' => 'Cash',
         'type' => AccountType::ASSET->value,
@@ -191,7 +192,7 @@ test('can generate trial balance', function (): void {
         'current_balance' => 0,
     ]);
 
-    $revenueAccount = Account::create([
+    $revenueAccount = Account::query()->create([
         'code' => '4000',
         'name' => 'Revenue',
         'type' => AccountType::REVENUE->value,
@@ -225,22 +226,22 @@ test('can generate trial balance', function (): void {
     $trialBalance = $reportService->getTrialBalance();
 
     expect($trialBalance)->toBeArray();
-    expect($trialBalance['is_balanced'])->toBeTrue();
-    expect($trialBalance['total_debits'])->toBe(1000.00);
-    expect($trialBalance['total_credits'])->toBe(1000.00);
+    expect(Arr::get($trialBalance, 'is_balanced'))->toBeTrue();
+    expect(Arr::get($trialBalance, 'total_debits'))->toBe(1000.00);
+    expect(Arr::get($trialBalance, 'total_credits'))->toBe(1000.00);
 })->uses(RefreshDatabase::class);
 
 test('can generate profit and loss statement', function (): void {
     $user = User::factory()->create();
     $this->actingAs($user);
-    $revenueAccount = Account::create([
+    $revenueAccount = Account::query()->create([
         'code' => '4000',
         'name' => 'Sales Revenue',
         'type' => AccountType::REVENUE->value,
         'is_active' => true,
     ]);
 
-    $expenseAccount = Account::create([
+    $expenseAccount = Account::query()->create([
         'code' => '5000',
         'name' => 'Operating Expenses',
         'type' => AccountType::EXPENSE->value,
@@ -259,14 +260,14 @@ test('can generate profit and loss statement', function (): void {
 test('can generate balance sheet', function (): void {
     $user = User::factory()->create();
     $this->actingAs($user);
-    $assetAccount = Account::create([
+    $assetAccount = Account::query()->create([
         'code' => '1000',
         'name' => 'Cash',
         'type' => AccountType::ASSET->value,
         'is_active' => true,
     ]);
 
-    $liabilityAccount = Account::create([
+    $liabilityAccount = Account::query()->create([
         'code' => '2000',
         'name' => 'Accounts Payable',
         'type' => AccountType::LIABILITY->value,
