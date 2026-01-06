@@ -25,7 +25,6 @@ final class AccountingServiceProvider extends ServiceProvider
     {
         $this->registerCommands();
         $this->registerCommandSchedules();
-        $this->registerTranslations();
         $this->registerConfig();
         $this->registerGuard();
         $this->registerViews();
@@ -70,21 +69,6 @@ final class AccountingServiceProvider extends ServiceProvider
         // });
     }
 
-    /**
-     * Register translations.
-     */
-    protected function registerTranslations(): void
-    {
-        $langPath = resource_path('lang/modules/' . $this->nameLower);
-
-        if (is_dir($langPath)) {
-            $this->loadTranslationsFrom($langPath, $this->nameLower);
-            $this->loadJsonTranslationsFrom($langPath);
-        } else {
-            $this->loadTranslationsFrom(module_path($this->name, 'resources/lang'), $this->nameLower);
-            $this->loadJsonTranslationsFrom(module_path($this->name, 'resources/lang'));
-        }
-    }
 
     /**
      * Register config.
