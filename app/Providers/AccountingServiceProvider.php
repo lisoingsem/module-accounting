@@ -69,7 +69,6 @@ final class AccountingServiceProvider extends ServiceProvider
         // });
     }
 
-
     /**
      * Register config.
      */
