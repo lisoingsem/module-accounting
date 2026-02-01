@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Accounting\Models;
 
-use App\Traits\HasUuidTrait;
+use App\Concerns\HasUuid;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +16,7 @@ use Modules\Accounting\Enums\AccountType;
 final class Account extends Model
 {
     use HasFactory;
-    use HasUuidTrait;
+    use HasUuid;
     use SoftDeletes;
 
     /**

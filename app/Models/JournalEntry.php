@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Modules\Accounting\Models;
 
+use App\Concerns\HasUuid;
 use App\Models\User;
-use App\Traits\HasUuidTrait;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,7 +19,7 @@ use Modules\Accounting\Enums\JournalEntryType;
 final class JournalEntry extends Model
 {
     use HasFactory;
-    use HasUuidTrait;
+    use HasUuid;
     use SoftDeletes;
 
     /**
