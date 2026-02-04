@@ -6,6 +6,7 @@ namespace Modules\Accounting\Models;
 
 use App\Concerns\HasUuid;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -125,7 +126,7 @@ final class Account extends Model
      * Scope to get active accounts.
      */
     #[Scope]
-    protected function active($query)
+    protected function active(Builder $query): Builder
     {
         return $query->where('is_active', true);
     }
@@ -134,7 +135,7 @@ final class Account extends Model
      * Scope to get accounts by type.
      */
     #[Scope]
-    protected function ofType($query, AccountType $type)
+    protected function ofType(Builder $query, AccountType $type): Builder
     {
         return $query->where('type', $type->value);
     }
@@ -143,7 +144,7 @@ final class Account extends Model
      * Scope to get root accounts (no parent).
      */
     #[Scope]
-    protected function root($query)
+    protected function root(Builder $query): Builder
     {
         return $query->whereNull('parent_id');
     }

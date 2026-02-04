@@ -7,6 +7,7 @@ namespace Modules\Accounting\Models;
 use App\Concerns\HasUuid;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -138,7 +139,7 @@ final class JournalEntry extends Model
      * Scope to get posted entries.
      */
     #[Scope]
-    protected function posted($query)
+    protected function posted(Builder $query): Builder
     {
         return $query->where('status', EntryStatus::POSTED->value);
     }
@@ -147,7 +148,7 @@ final class JournalEntry extends Model
      * Scope to get draft entries.
      */
     #[Scope]
-    protected function draft($query)
+    protected function draft(Builder $query): Builder
     {
         return $query->where('status', EntryStatus::DRAFT->value);
     }
@@ -156,7 +157,7 @@ final class JournalEntry extends Model
      * Scope to get manual entries.
      */
     #[Scope]
-    protected function manual($query)
+    protected function manual(Builder $query): Builder
     {
         return $query->where('type', JournalEntryType::MANUAL->value);
     }
@@ -165,7 +166,7 @@ final class JournalEntry extends Model
      * Scope to get auto entries.
      */
     #[Scope]
-    protected function auto($query)
+    protected function auto(Builder $query): Builder
     {
         return $query->where('type', JournalEntryType::AUTO->value);
     }
