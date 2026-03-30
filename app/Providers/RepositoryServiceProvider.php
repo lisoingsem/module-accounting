@@ -15,18 +15,22 @@ use Modules\Accounting\Repositories\JournalEntryRepository;
 final class RepositoryServiceProvider extends ServiceProvider
 {
     /**
+     * Repository bindings.
+     *
+     * @var array<class-string, class-string>
+     */
+    protected array $repositories = [
+        AccountContract::class => AccountRepository::class,
+        AccountingPeriodContract::class => AccountingPeriodRepository::class,
+        JournalEntryContract::class => JournalEntryRepository::class,
+    ];
+
+    /**
      * Register repository bindings.
      */
     public function register(): void
     {
-        $repositories = [
-            AccountContract::class => AccountRepository::class,
-            AccountingPeriodContract::class => AccountingPeriodRepository::class,
-            JournalEntryContract::class => JournalEntryRepository::class,
-        ];
-
-        // Bind all repositories
-        foreach ($repositories as $interface => $implementation) {
+        foreach ($this->repositories as $interface => $implementation) {
             $this->app->bind($interface, $implementation);
         }
     }
