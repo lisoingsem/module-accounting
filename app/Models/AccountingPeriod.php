@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Modules\Accounting\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use App\Concerns\HasUuid;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -13,29 +15,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[Table(name: 'accounting_periods')]
+#[Fillable([
+    'name',
+    'start_date',
+    'end_date',
+    'is_closed',
+    'closed_at',
+    'closed_by',
+    'notes',
+])]
 final class AccountingPeriod extends Model
 {
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
-
-    /**
-     * The table associated with the model.
-     */
-    protected $table = 'accounting_periods';
-
-    /**
-     * The attributes that are mass assignable.
-     */
-    protected $fillable = [
-        'name',
-        'start_date',
-        'end_date',
-        'is_closed',
-        'closed_at',
-        'closed_by',
-        'notes',
-    ];
 
     /**
      * Get the user who closed this period.

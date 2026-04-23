@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Modules\Accounting\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use App\Concerns\HasUuid;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,34 +16,26 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Accounting\Enums\AccountType;
 
+#[Table(name: 'accounting_accounts')]
+#[Fillable([
+    'code',
+    'name',
+    'type',
+    'description',
+    'parent_id',
+    'level',
+    'is_active',
+    'is_system',
+    'opening_balance',
+    'current_balance',
+    'currency',
+    'sort_order',
+])]
 final class Account extends Model
 {
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
-
-    /**
-     * The table associated with the model.
-     */
-    protected $table = 'accounting_accounts';
-
-    /**
-     * The attributes that are mass assignable.
-     */
-    protected $fillable = [
-        'code',
-        'name',
-        'type',
-        'description',
-        'parent_id',
-        'level',
-        'is_active',
-        'is_system',
-        'opening_balance',
-        'current_balance',
-        'currency',
-        'sort_order',
-    ];
 
     /**
      * Get the parent account.

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Modules\Accounting\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use App\Concerns\HasUuid;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -17,35 +19,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Accounting\Enums\EntryStatus;
 use Modules\Accounting\Enums\JournalEntryType;
 
+#[Table(name: 'accounting_journal_entries')]
+#[Fillable([
+    'entry_number',
+    'entry_date',
+    'type',
+    'status',
+    'description',
+    'reference',
+    'period_id',
+    'created_by',
+    'posted_by',
+    'posted_at',
+    'source_type',
+    'source_id',
+    'notes',
+])]
 final class JournalEntry extends Model
 {
     use HasFactory;
     use HasUuid;
     use SoftDeletes;
-
-    /**
-     * The table associated with the model.
-     */
-    protected $table = 'accounting_journal_entries';
-
-    /**
-     * The attributes that are mass assignable.
-     */
-    protected $fillable = [
-        'entry_number',
-        'entry_date',
-        'type',
-        'status',
-        'description',
-        'reference',
-        'period_id',
-        'created_by',
-        'posted_by',
-        'posted_at',
-        'source_type',
-        'source_id',
-        'notes',
-    ];
 
     /**
      * Get the accounting period for this entry.
