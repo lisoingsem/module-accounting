@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Modules\Accounting\Listeners;
 
+use Illuminate\Queue\Attributes\Queue;
+use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Modules\Accounting\Services\AccountingService;
 use Modules\Finance\Events\IncomeCreated;
 use Throwable;
 
+#[Queue('accounting')]
+#[Tries(3)]
 final class RecordFinanceIncome implements ShouldQueue
 {
-    public string $queue = 'accounting';
-
-    public int $tries = 3;
-
     /**
      * Create a new listener instance.
      */
