@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Modules\Accounting\Listeners;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\Attributes\Queue;
 use Illuminate\Queue\Attributes\Tries;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Modules\Accounting\Services\AccountingService;
 use Modules\Finance\Events\ExpenseCreated;
