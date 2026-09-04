@@ -17,7 +17,7 @@ final class AccountingPeriodRepository extends BaseEloquentRepository implements
      */
     public function __construct()
     {
-        $this->model = new AccountingPeriod();
+        $this->model = new AccountingPeriod;
     }
 
     /**

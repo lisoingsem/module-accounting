@@ -7,19 +7,19 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Modules\Accounting\Models\Account;
 
-return new class() extends Migration
+return new class extends Migration
 {
     public function up(): void
     {
-        if ( ! Schema::hasTable((new Account())->getTable())) {
-            Schema::create((new Account())->getTable(), function (Blueprint $table): void {
+        if ( ! Schema::hasTable((new Account)->getTable())) {
+            Schema::create((new Account)->getTable(), function (Blueprint $table): void {
                 $table->id();
                 $table->uuid('uuid')->unique();
                 $table->string('code', 50)->unique();
                 $table->string('name');
                 $table->enum('type', ['asset', 'liability', 'equity', 'revenue', 'expense']);
                 $table->text('description')->nullable();
-                $table->foreignId('parent_id')->nullable()->constrained((new Account())->getTable())->nullOnDelete();
+                $table->foreignId('parent_id')->nullable()->constrained((new Account)->getTable())->nullOnDelete();
                 $table->integer('level')->default(0);
                 $table->boolean('is_active')->default(true);
                 $table->boolean('is_system')->default(false);
@@ -41,6 +41,6 @@ return new class() extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists((new Account())->getTable());
+        Schema::dropIfExists((new Account)->getTable());
     }
 };

@@ -18,7 +18,7 @@ final class AccountRepository extends BaseEloquentRepository implements AccountC
      */
     public function __construct()
     {
-        $this->model = new Account();
+        $this->model = new Account;
     }
 
     /**

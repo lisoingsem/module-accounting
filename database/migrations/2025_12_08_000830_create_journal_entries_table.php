@@ -9,12 +9,12 @@ use Illuminate\Support\Facades\Schema;
 use Modules\Accounting\Models\AccountingPeriod;
 use Modules\Accounting\Models\JournalEntry;
 
-return new class() extends Migration
+return new class extends Migration
 {
     public function up(): void
     {
-        if ( ! Schema::hasTable((new JournalEntry())->getTable())) {
-            Schema::create((new JournalEntry())->getTable(), function (Blueprint $table): void {
+        if ( ! Schema::hasTable((new JournalEntry)->getTable())) {
+            Schema::create((new JournalEntry)->getTable(), function (Blueprint $table): void {
                 $table->id();
                 $table->uuid('uuid')->unique();
                 $table->string('entry_number')->unique();
@@ -23,9 +23,9 @@ return new class() extends Migration
                 $table->enum('status', ['draft', 'posted', 'reversed'])->default('draft');
                 $table->text('description');
                 $table->text('reference')->nullable();
-                $table->foreignId('period_id')->nullable()->constrained((new AccountingPeriod())->getTable())->nullOnDelete();
-                $table->foreignId('created_by')->constrained((new User())->getTable());
-                $table->foreignId('posted_by')->nullable()->constrained((new User())->getTable())->nullOnDelete();
+                $table->foreignId('period_id')->nullable()->constrained((new AccountingPeriod)->getTable())->nullOnDelete();
+                $table->foreignId('created_by')->constrained((new User)->getTable());
+                $table->foreignId('posted_by')->nullable()->constrained((new User)->getTable())->nullOnDelete();
                 $table->dateTime('posted_at')->nullable();
                 $table->string('source_type')->nullable();
                 $table->unsignedBigInteger('source_id')->nullable();
@@ -46,6 +46,6 @@ return new class() extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists((new JournalEntry())->getTable());
+        Schema::dropIfExists((new JournalEntry)->getTable());
     }
 };

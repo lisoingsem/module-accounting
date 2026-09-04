@@ -18,7 +18,7 @@ final class JournalEntryRepository extends BaseEloquentRepository implements Jou
      */
     public function __construct()
     {
-        $this->model = new JournalEntry();
+        $this->model = new JournalEntry;
     }
 
     /**

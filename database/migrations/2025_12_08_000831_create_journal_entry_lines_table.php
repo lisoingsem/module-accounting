@@ -9,15 +9,15 @@ use Modules\Accounting\Models\Account;
 use Modules\Accounting\Models\JournalEntry;
 use Modules\Accounting\Models\JournalEntryLine;
 
-return new class() extends Migration
+return new class extends Migration
 {
     public function up(): void
     {
-        if ( ! Schema::hasTable((new JournalEntryLine())->getTable())) {
-            Schema::create((new JournalEntryLine())->getTable(), function (Blueprint $table): void {
+        if ( ! Schema::hasTable((new JournalEntryLine)->getTable())) {
+            Schema::create((new JournalEntryLine)->getTable(), function (Blueprint $table): void {
                 $table->id();
-                $table->foreignId('journal_entry_id')->constrained((new JournalEntry())->getTable())->cascadeOnDelete();
-                $table->foreignId('account_id')->constrained((new Account())->getTable());
+                $table->foreignId('journal_entry_id')->constrained((new JournalEntry)->getTable())->cascadeOnDelete();
+                $table->foreignId('account_id')->constrained((new Account)->getTable());
                 $table->enum('type', ['debit', 'credit']);
                 $table->decimal('amount', 15, 2);
                 $table->text('description')->nullable();
@@ -36,6 +36,6 @@ return new class() extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists((new JournalEntryLine())->getTable());
+        Schema::dropIfExists((new JournalEntryLine)->getTable());
     }
 };

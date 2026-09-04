@@ -7,12 +7,12 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Modules\Accounting\Models\AccountingPeriod;
 
-return new class() extends Migration
+return new class extends Migration
 {
     public function up(): void
     {
-        if ( ! Schema::hasTable((new AccountingPeriod())->getTable())) {
-            Schema::create((new AccountingPeriod())->getTable(), function (Blueprint $table): void {
+        if ( ! Schema::hasTable((new AccountingPeriod)->getTable())) {
+            Schema::create((new AccountingPeriod)->getTable(), function (Blueprint $table): void {
                 $table->id();
                 $table->uuid('uuid')->unique();
                 $table->string('name');
@@ -35,6 +35,6 @@ return new class() extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists((new AccountingPeriod())->getTable());
+        Schema::dropIfExists((new AccountingPeriod)->getTable());
     }
 };
